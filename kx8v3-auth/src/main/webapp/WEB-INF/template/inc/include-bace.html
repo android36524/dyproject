@@ -1,0 +1,49 @@
+<%
+	var __BacePath = request.scheme + "://" + request.serverName + ":" + request.serverPort;
+	var path = request.contextPath;
+	var rootPath =  request.scheme + "://" + request.serverName + ":" + request.serverPort;
+	var basePath = rootPath + path;
+%>
+<!--basic styles-->
+
+<link href="${__BacePath}/public/bootstrap/ace/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="${__BacePath}/public/bootstrap/ace/css/font-awesome.min.css" />
+
+<!--[if IE 7]>
+  <link rel="stylesheet" href="${__BacePath}/public/bootstrap/ace/css/font-awesome-ie7.min.css" />
+<![endif]-->
+
+<!--basic scripts-->
+<!--[if IE]>
+<script type="text/javascript">
+ window.jQuery || document.write("<script src='${__BacePath}/public/bootstrap/ace/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
+</script>
+<![endif]-->
+
+<!--[if !IE]>-->
+<script type="text/javascript">
+	window.jQuery || document.write("<script src='${__BacePath}/public/bootstrap/ace/js/jquery-2.0.3.min.js'>" + "<"+"/script>");
+</script>
+<!--<![endif]-->
+
+<script src="${__BacePath}/public/bootstrap/ace/js/bootstrap.min.js"></script>
+<script src="${__BacePath}/public/bootstrap/ace/js/typeahead-bs2.min.js"></script>
+
+<!--ace scripts-->
+<script src="${__BacePath}/public/bootstrap/ace/js/ace-elements.min.js"></script>
+<script src="${__BacePath}/public/bootstrap/ace/js/ace.min.js"></script>
+<script src="${__BacePath}/public/bootstrap/ace/js/ace-extra.min.js"></script>
+
+
+<!--[if lte IE 8]>
+<script src="${__BacePath}/public/bootstrap/ace/js/html5shiv.js"></script>
+<link rel="stylesheet" href="${__BacePath}/public/bootstrap/ace/css/ace-ie.min.css" />
+<script src="${__BacePath}/public/bootstrap/ace/js/respond.min.js"></script>
+<![endif]-->
+
+<!--ace styles-->
+<link rel="stylesheet" href="${__BacePath}/public/bootstrap/ace/css/ace.min.css" />
+<link rel="stylesheet" href="${__BacePath}/public/bootstrap/ace/css/ace-skins.min.css" />
+<!--[if lte IE 8]>
+  <link rel="stylesheet" href="${__BacePath}/public/bootstrap/ace/css/ace-ie.min.css" />
+<![endif]-->

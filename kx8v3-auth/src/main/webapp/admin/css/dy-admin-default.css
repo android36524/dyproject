@@ -1,0 +1,22 @@
+@CHARSET "UTF-8";
+/**大洋管理后台的默认样式 */
+.dy-dialog-form .control-label{
+	width: 100px;
+}
+
+.dy-dialog-form .controls{
+	margin-left: 80px;
+}
+
+.dy-i{
+	font-style: normal;
+}
+
+.dy-search-button{
+	height:28px;
+	width:auto;
+	padding: 0px;
+	margin-left: 10px;
+	margin-bottom:4px;
+}
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <echo message="开始复制jar......"/>
+  <copy todir="I:\kx8v3-auth/src/main/webapp/WEB-INF/lib" overwrite="true">
+    <fileset dir="I:\kx8v3-auth/lib"/>
+  </copy>
+  <echo message="jar包复制完成......"/>
+  <echo message="开始复制配置文件......"/>
+  <copy todir="I:\kx8v3-auth/src/main/webapp/WEB-INF/classes" overwrite="true">
+    <fileset dir="I:\kx8v3-auth/src/main/java/">
+      <include name="**/*.xml"/>
+    </fileset>
+  </copy>
+  <echo message="配置文件复制完成......"/>
+</target>
+</project>

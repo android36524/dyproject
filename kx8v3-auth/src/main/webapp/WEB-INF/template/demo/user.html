@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>地域列表</title>
+</head>
+<body>
+	<table style="width: 400px;" border="1px" cellpadding="0" cellspacing="1">
+	<%for(test in areaList){%>
+		<tr>
+			<td>${testLP.index}</td>
+			<td>${test.id}</td>
+			<td>${test.name!''}</td>
+			<td>${test.reid}</td>
+		</tr>
+	<%}%>
+	</table>
+</body>
+</html>

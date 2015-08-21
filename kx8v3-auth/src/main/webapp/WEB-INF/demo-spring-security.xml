@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	
+	<!-- 指定spring security的国际化 -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<!-- 国际化资源文件可以自定义 -->
+		<property name="basename" value="classpath:org/springframework/security/messages_zh_CN"></property>
+	</bean>
+	
+	<!-- 从数据库读取用户角色权限信息 -->
+	<bean id="userDetailsService" class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<security:http entry-point-ref="casEntryPoint" use-expressions="true">
+		<!-- 指定登录页面 -->
+		<security:form-login login-page="${cas.server.host}"/>
+		<!-- 指定注销页面 -->
+		<security:logout logout-url="/logout" invalidate-session="true" logout-success-url="${cas.server.host}/logout?service=${cas.service.host}"/>
+		<!-- 配置会话超时的页面 -->
+		<!-- <security:session-management invalid-session-url="/error/sessionTimeout.jsp"> -->
+			<!-- 防止用户多次登录的配置 -->
+			<!-- <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/> -->
+		<!-- </security:session-management> -->
+		
+		<!-- 指定不拦截的页面 -->
+		<security:intercept-url pattern="/login.jsp*" access="permitAll"/>
+		<security:intercept-url pattern="/index*" access="permitAll"/>
+		<security:intercept-url pattern="/" access="permitAll"/>
+		<!-- 指定需要拦截的页面 -->
+		<security:intercept-url pattern="/admin/**" access="hasRole('ROLE_USER')"/>
+		<security:intercept-url pattern="/demo/security/**" access="hasRole('ROLE_USER')"/>
+		
+		<!-- 自定义过滤器 -->
+		<security:custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER"/>
+		<security:custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/>
+		<security:custom-filter ref="casFilter" position="CAS_FILTER"/>
+	</security:http>
+	
+	<security:authentication-manager alias="authManager">
+		<!-- 使用数据源 -->
+		<!-- <security:authentication-provider user-service-ref="userDetailsService"></security:authentication-provider> -->
+		<!-- 使用自定义用户 -->
+		<!-- <security:authentication-provider>
+			<security:user-service>
+				<security:user name="user" password="user" authorities="ROLE_USER"/>
+			</security:user-service>
+		</security:authentication-provider> -->
+		<!-- 使用CAS -->
+		<security:authentication-provider ref="casAuthProvider"></security:authentication-provider>
+	</security:authentication-manager>
+	
+	<security:user-service id="userService">
+		<security:user name="admin" password="admin" authorities="ROLE_SUPERVISOR,ROLE_USER"/>
+		<security:user name="TR" password="123456" authorities="ROLE_SUPERVISOR,ROLE_USER"/>
+		<security:user name="scott" password="scott" authorities="ROLE_USER"/>
+	</security:user-service>
+	
+	<!-- 登录注销配置 -->
+	<!-- 注销客户端 -->
+	<bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"></bean>
+	<!-- 注销服务端 -->
+	<bean id="requestSingleLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<constructor-arg value="${cas.server.host}"></constructor-arg>
+		<constructor-arg>
+			<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler">
+			</bean>
+		</constructor-arg>
+		<property name="filterProcessesUrl" value="/j_spring_cas_security_logout"></property>
+	</bean>
+	
+	<bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
+		<property name="service" value="${cas.service.host}/j_spring_cas_security_check"></property>
+		<property name="authenticateAllArtifacts" value="true"></property>
+	</bean>
+	
+	<bean id="casEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+		<property name="serviceProperties" ref="serviceProperties"></property>
+		<property name="loginUrl" value="${cas.server.host}/login"></property>
+	</bean>
+	
+	<bean id="casFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
+		<property name="authenticationManager" ref="authManager"></property>
+		<property name="serviceProperties" ref="serviceProperties"></property>
+		<property name="proxyGrantingTicketStorage" ref="pgtStorage"></property>
+		<property name="proxyReceptorUrl" value="/j_spring_cas_security_proxyreceptor"></property>
+		<property name="authenticationDetailsSource">
+			<bean class="org.springframework.security.cas.web.authentication.ServiceAuthenticationDetailsSource"></bean>
+		</property>
+		<property name="authenticationFailureHandler">
+			<bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+				<property name="defaultFailureUrl" value="/error/casfailed.jsp"></property>
+			</bean>
+		</property>
+		<property name="authenticationSuccessHandler">
+			<bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<property name="defaultTargetUrl" value="/"></property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="pgtStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl"></bean>
+	
+	<bean id="casAuthProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider" >
+		<property name="serviceProperties" ref="serviceProperties"></property>
+		<property name="key" value="casAuthProviderKey"></property>
+		<property name="authenticationUserDetailsService">
+			<!-- <bean class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+				<constructor-arg ref="userService"></constructor-arg>
+			</bean> -->
+			<ref bean="daYangUserDetailsService"/>
+		</property>
+		<property name="ticketValidator">
+			<bean class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
+				<property name="acceptAnyProxy" value="true"></property>
+				<property name="proxyCallbackUrl" value="${cas.service.host}/j_spring_cas_security_proxyreceptor"></property>
+				<property name="proxyGrantingTicketStorage" ref="pgtStorage"></property>
+				<constructor-arg value="${cas.server.host}"></constructor-arg>
+			</bean>
+		</property>
+		<!-- <property name="statelessTicketCache">
+			<bean class="org.springframework.security.cas.authentication.EhCacheBasedTicketCache">
+				<property name="cache">
+					<bean class="net.sf.ehcache.Cache" init-method="initialise" destroy-method="dispose">
+						<constructor-arg value="casTickets"></constructor-arg>
+						<constructor-arg value="50"></constructor-arg>
+						<constructor-arg value="true"></constructor-arg>
+						<constructor-arg value="false"></constructor-arg>
+						<constructor-arg value="3600"></constructor-arg>
+						<constructor-arg value="900"></constructor-arg>
+					</bean>
+				</property>
+			</bean>
+		</property> -->
+	</bean>
+	
+	<!-- 获取用户明细 -->
+	<bean id="authenticationUserDetailsService" class="org.springframework.security.cas.userdetails.GrantedAuthorityFromAssertionAttributesUserDetailsService">
+		<constructor-arg>
+			<array>
+				<value>id</value>
+                <value>account</value>
+                <value>passward</value>
+                <value>nickName</value>
+                <value>accountType</value>
+                <value>status</value>
+                <value>name</value>
+                <value>sex</value>
+                <value>telephone</value>
+                <value>email</value>
+                <value>orgId</value>
+                <value>loginTime</value>
+                <value>memo</value>
+                <value>accountSouce</value>
+			</array>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 启用Spring Security的Annotation配置，保护业务代码的执行 -->
+	<security:global-method-security secured-annotations="enabled" jsr250-annotations="enabled">
+		<!-- 可以使用切入点的形式保护业务代码 -->
+		<!-- <security:protect-pointcut access="" expression=""/> -->	
+	</security:global-method-security>
+</beans>

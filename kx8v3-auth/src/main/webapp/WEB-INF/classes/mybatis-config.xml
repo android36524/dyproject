@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<properties>
+		<!-- 时间日期格式设置 -->
+		<property name="DATETIME_FORMART" value="%Y-%m-%d %H:%i:%s"/>
+		<property name="TIME_FORMART" value="%H:%i:%s"/>
+		<property name="DATE_FORMART" value="%Y-%m-%d"/>
+	</properties>
+	
+	<settings>
+		<!-- <setting name="logImpl" value="LOG4J"/> -->
+		<setting name="logPrefix" value="iSky-MTA:"/>
+		<!-- 配置单传入的值为空时的默认值 -->
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<!-- 设置mybatis的日志接口 -->
+		<setting name="logImpl" value="LOG4J"/>
+	</settings>
+	
+	<typeAliases>
+		<!-- demo的实体类 -->
+		<package name="com.dayang.demo.pojo"/>
+		<package name="com.dayang.demo.dao.dto"/>
+	</typeAliases>
+	
+	<plugins>
+    	<!-- com.framework.core.ibatis.plugin.util为PageHelper类所在包名 -->
+    	<plugin interceptor="com.dayang.commons.ibatis.plugin.util.PageHelper">
+        	<property name="dialect" value="mysql"/>
+        	<!-- 该参数默认为false -->
+        	<!-- 设置为true时，会将RowBounds第一个参数offset当成pageNum页码使用 -->
+        	<!-- 和startPage中的pageNum效果一样-->
+        	<property name="offsetAsPageNum" value="true"/>
+        	<!-- 该参数默认为false -->
+        	<!-- 设置为true时，使用RowBounds分页会进行count查询 -->
+        	<property name="rowBoundsWithCount" value="true"/>
+    	</plugin>
+	</plugins>
+	
+	<mappers>
+		<mapper resource="com/dayang/demo/dao/sqlmap/sqlmap-area.xml"/>
+	</mappers>
+</configuration>

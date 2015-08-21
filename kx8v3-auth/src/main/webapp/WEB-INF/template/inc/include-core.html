@@ -1,0 +1,17 @@
+<%
+	var path = request.contextPath;
+	var rootPath =  request.scheme + "://" + request.serverName + ":" + request.serverPort;
+	var basePath = rootPath + path;
+%>
+<!-- jquery以及核心类 -->
+<script type="text/javascript" src="${rootPath}/public/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="${rootPath}/public/lib/jquery.cookie.js"></script>
+<script type="text/javascript" src="${rootPath}/public/lib/jquery.json-2.4.js"></script>
+<script type="text/javascript" src="${rootPath}/public/lib/jquery.loadJSON.js"></script>
+
+<!--选用组件 -->
+<script type="text/javascript" src="${rootPath}/public/lib/validate/jquery.validate.js"></script>
+<script type="text/javascript" src="${rootPath}/public/lib/validate/additional-methods.js"></script>
+
+<!-- js工具类 -->
+<script type="text/javascript" src="${rootPath}/public/lib/underscore-min.js"></script>

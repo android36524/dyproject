@@ -1,0 +1,75 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<%@include file="/include-path.jsp"%>
+	<%@include file="/common/include-bace.jsp"%>
+	<title>大洋基础平台-404页面未找到</title>
+</head>
+<body>
+	<div class="error-container">
+		<div class="well">
+			<h1 class="grey lighter smaller">
+				<span class="blue bigger-125">
+					<i class="icon-sitemap"></i>
+					404
+				</span>
+				页面未找到
+			</h1>
+
+			<hr />
+			<!-- <h3 class="lighter smaller">We looked everywhere but we couldn't find it!</h3> -->
+			<div>
+				<!-- <form class="form-search" />
+					<span class="input-icon">
+						<i class="icon-search"></i>
+
+						<input type="text" class="input-medium search-query" placeholder="Give it a search..." />
+					</span>
+					<button class="btn btn-small" onclick="return false;">Go!</button>
+				</form> -->
+
+				<div class="space"></div>
+				<h4 class="smaller">请尝试进行以下操作:</h4>
+
+				<ul class="unstyled spaced inline bigger-110">
+					<li>
+						<i class="icon-hand-right blue"></i>
+						检查您输入的网址是否正确
+					</li>
+
+					<li>
+						<i class="icon-hand-right blue"></i>
+						阅读常见问题
+					</li>
+
+					<li>
+						<i class="icon-hand-right blue"></i>
+						联系我们
+					</li>
+				</ul>
+			</div>
+
+			<hr />
+			<div class="space"></div>
+
+			<div class="row-fluid">
+				<div class="center">
+					<a href="javascript:window.history.back()" class="btn btn-grey">
+						<i class="icon-arrow-left"></i>
+						返回
+					</a>
+
+					<a href="<%=path %>" class="btn btn-primary">
+						<i class="icon-dashboard"></i>
+						主页
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.dayang</groupId>
+	<artifactId>kx8v3-basicdata</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>开学吧3.0基础平台</name>
+	<description>开学吧3.0基础平台</description>
+
+	<properties>
+		<war.name>basicdata</war.name>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- 编译配置 -->
+	<build>
+		
+		<outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
+		<testOutputDirectory>src/main/webapp/WEB-INF/classes</testOutputDirectory>
+		<plugins>
+			<!-- 指定JDK编译的版本 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<!-- 设置编译路径 -->
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<webappDirectory>${basedir}/src/main/webapp</webappDirectory>
+					<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+					<warName>${war.name}</warName>
+					<archiveClasses>true</archiveClasses>
+				</configuration>
+			</plugin>
+			
+			<!-- Tomcat自动部署 -->
+			<plugin>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<groupId>org.codehaus.mojo</groupId>
+				<configuration>
+					<url>http://192.168.1.4:8083/manager</url>
+					<username>admin</username>
+					<password>admin5091329</password>
+					<path>/${finalName}</path>
+					<warFile>${basedir}/target/${war.warname}.war</warFile>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<tagBase>http://10.0.0.24:81/svn/dyxx3.0/dayangBase/tags/</tagBase>
+					<username>zhangcaisheng</username>
+					<password>zhndy2014</password>
+					<checkModificationExcludes>
+						<checkModificationExclude>pom.xml</checkModificationExclude>
+					</checkModificationExcludes>
+				</configuration>
+			</plugin>
+			<!-- 集成sonar -->
+			<plugin>
+                 <groupId>org.codehaus.sonar</groupId>
+				  <artifactId>sonar-maven-plugin</artifactId>
+				  <version>4.5.1</version>
+             </plugin>
+             
+             <!-- maven ant plugin -->
+	         <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>pre-clean</id>
+						<phase>pre-clean</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						 <configuration>
+                            <target>
+                            	<!-- 复制自定义的jar -->
+                            	<echo message="开始删除WEB-INF/lib下所有的jar......" />
+                                <delete>
+                                	<fileset dir="${basedir}/src/main/webapp/WEB-INF/lib" includes="*.jar"/>
+                                </delete>
+                                <echo message="完成删除WEB-INF/lib下所有的jar......" />
+                            </target>
+                        </configuration>
+					</execution>
+					<execution>
+						<id>prepare-package</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                         <configuration>
+                            <target>
+                            	<!-- 复制自定义的jar -->
+                            	<echo message="开始复制jar......" />
+                                <copy todir="${basedir}/src/main/webapp/WEB-INF/lib" overwrite="true">
+                                	<fileset dir="${basedir}/lib"/>
+                                </copy>
+                                <echo message="jar包复制完成......" />
+                                
+                            	<!-- 复制XML配置文件 -->
+                                <echo message="开始复制配置文件......" />
+                                <copy todir="${basedir}/src/main/webapp/WEB-INF/classes" overwrite="true">
+                                	<fileset dir="${basedir}/src/main/java/">
+                                		<include name="**/*.xml" />
+                                	</fileset>
+                                </copy>
+                                <echo message="配置文件复制完成......" />
+                            </target>
+                        </configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<!-- 大洋java web工程 pom -->
+		<dependency>
+			<groupId>com.dayang</groupId>
+			<artifactId>dayang-web-parent</artifactId>
+			<version>1.1.2</version>
+			<type>pom</type>
+			<exclusions>
+				<exclusion>
+					<artifactId>c3p0</artifactId>
+					<groupId>c3p0</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jetty-servlet</artifactId>
+					<groupId>org.eclipse.jetty</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.dayang</groupId>
+		  <artifactId>dy-common</artifactId>
+		  <version>1.1.26-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.jfinal</groupId>
+		  <artifactId>cos</artifactId>
+		  <version>26Dec2008</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>2.8.5</version>
+		</dependency>
+		
+		<!-- jfinal 扩展 -->
+		<dependency>
+			<groupId>com.jfinal</groupId>
+			<artifactId>jfinal-ext</artifactId>
+			<version>3.1.2</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.3.0.RELEASE</version>
+		</dependency>
+		
+		<!-- 图片压缩 -->
+		<dependency>
+		    <groupId>net.coobird</groupId>
+		    <artifactId>thumbnailator</artifactId>
+		    <version>0.4.8</version>
+		</dependency>
+		
+		<!-- 文档转换 -->
+		<dependency>
+		  <groupId>com.artofsolving</groupId>
+		  <artifactId>jodconverter</artifactId>
+		  <version>2.2.1</version>
+		</dependency>
+		
+		<!-- html解析 -->
+		<dependency>
+		  <groupId>org.jsoup</groupId>
+		  <artifactId>jsoup</artifactId>
+		  <version>1.8.1</version>
+		</dependency>
+		
+		<!--汉字转拼音-->
+		<dependency>
+			<groupId>com.github.stuxuhai</groupId>
+			<artifactId>jpinyin</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.10-FINAL</version>
+		</dependency>
+
+		<!--validator-->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.2.0.CR1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+			<version>2.6</version>
+		</dependency>
+	</dependencies>
+	
+	<!-- 构建模式 -->
+	<profiles>
+		<!--测试环境部署-->
+        <profile>
+            <id>deploy2Test</id>
+            <build>
+                <finalName>${war.name}-test</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-package</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!--替换测试环境的配置文件-->
+                                        <echo message="开始替换测试平台配置文件......" />
+                                        <copy todir="${basedir}/src/main/webapp/" overwrite="true">
+                                            <fileset dir="${basedir}/src/main/resources/conf/test/">
+                                                <include name="**/*.*" />
+                                            </fileset>
+                                        </copy>
+                                        <echo message="测试平台配置文件替换完成......" />
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+        
+        
+        <!--开发环境部署-->
+        <profile>
+            <id>deploy2Dev</id>
+            <build>
+                <finalName>${war.name}-dev</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-package</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!--替换测试环境的配置文件-->
+                                        <echo message="开始替换开发平台配置文件......" />
+                                        <copy todir="${basedir}/src/main/webapp/" overwrite="true">
+                                            <fileset dir="${basedir}/src/main/resources/conf/dev/">
+                                                <include name="**/*.*" />
+                                            </fileset>
+                                        </copy>
+                                        <echo message="开发平台配置文件替换完成......" />
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+         <!--联调环境部署-->
+        <profile>
+            <id>deploy2Integrate</id>
+            <build>
+                <finalName>${war.name}-integrate</finalName>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-package</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!--替换测试环境的配置文件-->
+                                        <echo message="开始替换联调平台配置文件......" />
+                                        <copy todir="${basedir}/src/main/webapp/" overwrite="true">
+                                            <fileset dir="${basedir}/src/main/resources/conf/integrate/">
+                                                <include name="**/*.*" />
+                                            </fileset>
+                                        </copy>
+                                        <echo message="联调平台配置文件替换完成......" />
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+	</profiles>
+
+	<!-- 上传到Maven中央仓库的配置 -->
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<url>http://127.0.0.1:8081/nexus/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://127.0.0.1:8081/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:svn:http://10.0.0.24:81/svn/dyxx3.0/dayangBase/trunk/dayangBase/</connection>
+		<developerConnection>scm:svn:http://10.0.0.24:81/svn/dyxx3.0/dayangBase/trunk/dayangBase/</developerConnection>
+	</scm>
+</project>

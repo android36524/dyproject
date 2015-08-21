@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="kx8v3-base:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="basicdata.war">
+      <element id="artifact" artifact-name="kx8v3-base:war exploded" />
+    </root>
+  </artifact>
+</component>

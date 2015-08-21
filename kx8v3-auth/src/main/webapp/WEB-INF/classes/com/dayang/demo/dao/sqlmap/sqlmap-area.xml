@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DEMO_AREA">
+	<!-- 查询地域 -->
+	<select id="QUERY" parameterType="AreaDto" resultType="AreaDto">
+		SELECT ID,NAME,REID,DISORDER FROM DEMO_AREA
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="id != null and id != 0">
+				AND ID = #{id}
+			</if>
+			<if test="name != null and name != ''">
+				AND NAME = #{name}
+			</if>
+			<if test="reid != null and reid != ''">
+				AND REID = #{reid}
+			</if>
+		</trim>
+	</select>	
+</mapper>
